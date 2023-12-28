@@ -24,9 +24,9 @@ class NetworkUnit(models.Model):
 
     title = models.CharField(max_length=150, verbose_name='Название')
     type = models.CharField(max_length=30, choices=TYPES, verbose_name='Тип ')
-    products = models.ManyToManyField(Product, blank=True, null=True, verbose_name='Продукты')
+    products = models.ManyToManyField(Product, blank=True, verbose_name='Продукты')
     supplier = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, verbose_name='Поставщик')
-    debt = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True, verbose_name='Задолженность')
+    debt = models.DecimalField(max_digits=20, decimal_places=2, default=0, verbose_name='Задолженность')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     level = models.IntegerField(default=None, blank=True, null=True, editable=False, verbose_name='Уровень в иерархии')
 
@@ -42,7 +42,7 @@ class NetworkUnit(models.Model):
         if self.type == 'factory':
             self.level = 0
             self.supplier = None
-        elif self.supplier.type == 'factory':
+        elif self.supplier and self.supplier.type == 'factory':
             self.level = 1
         elif self.supplier and self.supplier.type == 'retail' or self.supplier and self.supplier.type == 'businessman':
             self.level = 2
